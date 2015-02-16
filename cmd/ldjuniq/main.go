@@ -13,6 +13,8 @@ import (
 	"strings"
 )
 
+const Version = "0.1.0"
+
 // StringValue returns the value for a given key in dot notation
 func StringValue(key string, doc map[string]interface{}) (string, error) {
 	keys := strings.Split(key, ".")
@@ -46,8 +48,14 @@ func StringValue(key string, doc map[string]interface{}) (string, error) {
 
 func main() {
 	key := flag.String("key", "", "key in dot notation")
+	version := flag.Bool("v", false, "show version and exit")
 
 	flag.Parse()
+
+	if *version {
+		fmt.Println(Version)
+		os.Exit(0)
+	}
 
 	if *key == "" {
 		log.Fatal("key is required")
