@@ -11,6 +11,8 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/tchap/go-patricia/patricia"
 )
 
 const Version = "0.1.0"
@@ -73,7 +75,7 @@ func main() {
 		reader = bufio.NewReader(file)
 	}
 
-	seen := make(map[string]struct{})
+	trie := patricia.NewTrie()
 
 	for {
 		line, err := reader.ReadString('\n')
@@ -92,15 +94,15 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		_, ok := seen[val]
-		if ok {
+		if trie.Match(patricia.Prefix(val)) {
+			log.Println("SKIP")
 			continue
 		}
 		b, err := json.Marshal(doc)
 		if err != nil {
 			log.Fatal(err)
 		}
-		seen[val] = struct{}{}
+		trie.Insert(patricia.Prefix(val), 1)
 		fmt.Println(string(b))
 	}
 }
